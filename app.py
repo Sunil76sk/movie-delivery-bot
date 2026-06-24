@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from pyrogram import Client
+from pyrogram import Client, idle
 from config import API_ID, API_HASH, BOT_TOKEN
 
 logging.basicConfig(
@@ -16,45 +16,20 @@ app = Client(
     bot_token=BOT_TOKEN
 )
 
-from handlers import (
-    start_handler,
-    upload_handler,
-    force_join_check,
-    callback_handler
-)
-
-from handlers.start import start_handler, help_handler, search_handler
-from handlers.upload import upload_handler, receive_poster, receive_movie_file, receive_text_input, cancel_upload
-from handlers.forcejoin import force_join_check
-from handlers.callbacks import (
-    show_movie,
-    download_movie,
-    show_analytics,
-    delete_movie,
-    back_to_menu
-)
+import handlers.start
+import handlers.upload
+import handlers.callbacks
 
 
 async def main():
     logger.info("Starting Movie Delivery Bot...")
     await app.start()
     logger.info("Bot started successfully!")
-    
     me = await app.get_me()
     logger.info(f"Bot username: @{me.username}")
-    
-    await asyncio.Event().wait()
+    await idle()
+    await app.stop()
 
 
 if __name__ == "__main__":
-    from pyrogram import idle
-    
-    loop = asyncio.get_event_loop()
-    
-    async def run():
-        await app.start()
-        logger.info("Bot is running...")
-        await idle()
-        await app.stop()
-    
-    loop.run_until_complete(run())
+    asyncio.get_event_loop().run_until_complete(main())
