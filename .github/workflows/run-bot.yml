@@ -1,0 +1,39 @@
+name: Run Movie Delivery Bot
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Run bot
+      env:
+        API_ID: ${{ secrets.API_ID }}
+        API_HASH: ${{ secrets.API_HASH }}
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        MONGO_URI: ${{ secrets.MONGO_URI }}
+        STORAGE_CHANNEL_ID: ${{ secrets.STORAGE_CHANNEL_ID }}
+        BACKUP_CHANNEL_ID: ${{ secrets.BACKUP_CHANNEL_ID }}
+        MAIN_CHANNEL_ID: ${{ secrets.MAIN_CHANNEL_ID }}
+        BACKUP_JOIN_CHANNEL_ID: ${{ secrets.BACKUP_JOIN_CHANNEL_ID }}
+        ADMIN_IDS: ${{ secrets.ADMIN_IDS }}
+        SHORTENER_API_KEY: ${{ secrets.SHORTENER_API_KEY }}
+        SHORTENER_API_URL: ${{ secrets.SHORTENER_API_URL }}
+      run: python app.py
